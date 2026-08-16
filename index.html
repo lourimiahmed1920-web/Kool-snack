@@ -1,10 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>kool-snack</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!--
+      viewport-fit=cover is required, not cosmetic: Capacitor 8 draws the WebView
+      edge-to-edge and only reports safe-area insets when this is present.
+      user-scalable=no keeps the fixed app bar / tab bar from being pinch-zoomed
+      out of alignment, which is what makes a WebView read as a web page.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content="Kool Snack Neuss — Pizza, Burger, Tacos und Shawarma. 100% Halal, frisch zubereitet." />
+
+    <!-- iOS standalone/home-screen behaviour for the PWA fallback path -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Kool Snack" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <title>Kool Snack</title>
   </head>
   <body>
     <div id="root"></div>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Overrides the default indigo/pink palette that ships inside the
+    capacitor-android library, so system chrome (task switcher, splash) matches
+    the app instead of announcing a stock template. Values mirror the CSS tokens
+    in src/index.css — --color-primary and --color-primary-hover.
+-->
+<resources>
+    <color name="colorPrimary">#DC4B34</color>
+    <color name="colorPrimaryDark">#B93D2A</color>
+    <color name="colorAccent">#DC4B34</color>
+
+    <!-- Splash background; matches SplashScreen.backgroundColor in capacitor.config.ts.
+         White because the logo has no alpha channel — see the note there. -->
+    <color name="splashBackground">#FFFFFF</color>
+</resources>

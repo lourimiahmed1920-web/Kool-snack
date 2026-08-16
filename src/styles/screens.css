@@ -1,0 +1,1289 @@
+/*
+  Customer-facing screen layout. Chrome (bars, sheets, steppers) lives in
+  shell.css; tokens and primitives in index.css. Mobile-first throughout —
+  the only breakpoint widens the layout once there is room for it.
+*/
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-4) calc(var(--space-4) + var(--sal)) var(--space-8) calc(var(--space-4) + var(--sar));
+}
+
+/* The home hero is full-bleed, so this screen supplies its own padding. */
+.screen--home {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+  gap: var(--space-8);
+}
+
+/* Clears the fixed action bar so the last field isn't trapped underneath it. */
+.screen--with-action {
+  padding-bottom: calc(var(--action-bar-h) + var(--space-4));
+}
+
+.screen-state {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--color-ink-600);
+}
+
+.screen-state--error {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border-radius: var(--radius-card);
+  padding: var(--space-3) var(--space-4);
+  font-size: 14px;
+}
+
+/* ---------------------------------------------------------- empty states */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+}
+
+.empty-state__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.empty-state__icon--success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.empty-state__title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.empty-state__text {
+  color: var(--color-ink-600);
+  max-width: 34ch;
+}
+
+.empty-state .btn {
+  margin-top: var(--space-2);
+  min-width: 200px;
+}
+
+/* ------------------------------------------------------------ home hero */
+
+.home-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  padding: calc(var(--sat) + var(--space-2)) calc(var(--space-4) + var(--sar)) var(--space-6)
+    calc(var(--space-4) + var(--sal));
+  color: #fff;
+  isolation: isolate;
+}
+
+.home-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(24, 24, 27, 0.55) 0%, rgba(24, 24, 27, 0.4) 40%, rgba(24, 24, 27, 0.85) 100%);
+}
+
+.home-hero__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: var(--app-bar-h);
+}
+
+.home-hero__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.home-hero__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-tile);
+  object-fit: cover;
+}
+
+.home-hero__brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-hero__call {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+}
+
+.home-hero__call:active {
+  transform: scale(0.92);
+}
+
+.home-hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-12) 0 var(--space-6);
+}
+
+.home-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-success);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.home-hero__title {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.home-hero__tagline {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 38ch;
+}
+
+.home-hero__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink-400);
+  text-decoration: none;
+  font-size: 15px;
+  box-shadow: 0 6px 24px rgba(24, 24, 27, 0.22);
+}
+
+.home-hero__search:active {
+  transform: scale(0.99);
+}
+
+/* --------------------------------------------------------- home sections */
+
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 calc(var(--space-4) + var(--sar)) 0 calc(var(--space-4) + var(--sal));
+}
+
+.home-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.home-section__title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.home-section__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------ card rail */
+
+/*
+  Bleeds to both screen edges so a half-visible next card advertises that the
+  rail scrolls. The negative margins undo the section padding; the matching
+  scroll-padding keeps snapped cards aligned to the content edge.
+*/
+.rail {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 calc(-1 * (var(--space-4) + var(--sar))) 0 calc(-1 * (var(--space-4) + var(--sal)));
+  padding: var(--space-1) calc(var(--space-4) + var(--sar)) var(--space-2) calc(var(--space-4) + var(--sal));
+  scroll-padding-left: calc(var(--space-4) + var(--sal));
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.rail-card {
+  flex: 0 0 152px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 80ms ease;
+}
+
+.rail-card:active {
+  transform: scale(0.97);
+}
+
+.rail-card__image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+.rail-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3);
+}
+
+.rail-card__name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.rail-card__tagline {
+  font-size: 12px;
+  color: var(--color-ink-400);
+}
+
+.rail-card--skeleton {
+  height: 168px;
+  background: var(--color-line);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------ active order card */
+
+.active-order {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0 calc(var(--space-4) + var(--sar)) 0 calc(var(--space-4) + var(--sal));
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-ink-900);
+  color: #fff;
+  text-decoration: none;
+}
+
+.active-order:active {
+  transform: scale(0.99);
+}
+
+.active-order__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.active-order__eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.active-order__status {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.active-order__hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.active-order__track {
+  height: 4px;
+  margin-top: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.active-order__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--color-success);
+  transition: width 400ms ease;
+}
+
+.active-order__meta {
+  margin-top: var(--space-2);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------- highlight grid */
+
+.highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.highlight-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+
+.highlight-card__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-tile);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.highlight-card__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.highlight-card__text {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-ink-600);
+}
+
+/* ------------------------------------------------------------- info list */
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  overflow: hidden;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  text-decoration: none;
+  color: inherit;
+}
+
+.info-row + .info-row {
+  border-top: 1px solid var(--color-line);
+}
+
+.info-row__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-tile);
+  background: var(--color-surface-alt);
+  color: var(--color-ink-600);
+}
+
+.info-row__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.info-row__label {
+  font-size: 12px;
+  color: var(--color-ink-400);
+}
+
+.info-row__value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.info-row__chevron {
+  color: var(--color-ink-400);
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------- menu screen */
+
+.screen--menu {
+  gap: var(--space-4);
+}
+
+.menu-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.menu-search__icon {
+  position: absolute;
+  left: var(--space-4);
+  color: var(--color-ink-400);
+  pointer-events: none;
+}
+
+.menu-search__input {
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--space-12) 0 calc(var(--space-4) + 26px);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font: 400 16px/1 var(--sans);
+  color: var(--color-ink-900);
+  appearance: none;
+}
+
+.menu-search__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(220, 75, 52, 0.15);
+}
+
+/* The stock WebKit search cancel button is tiny and off-brand. */
+.menu-search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.menu-search__clear {
+  position: absolute;
+  right: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-alt);
+  color: var(--color-ink-600);
+  cursor: pointer;
+}
+
+/*
+  Sticky under whatever chrome is above it — the app bar on phones, the top nav
+  on desktop. `--sticky-top` folds in the app bar's own safe-area padding, so the
+  rail can't slide under the status bar on a notched phone.
+*/
+.chip-rail {
+  position: sticky;
+  top: var(--sticky-top);
+  z-index: 20;
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 calc(-1 * (var(--space-4) + var(--sar))) 0 calc(-1 * (var(--space-4) + var(--sal)));
+  padding: var(--space-2) calc(var(--space-4) + var(--sar)) var(--space-2) calc(var(--space-4) + var(--sal));
+  background: color-mix(in srgb, var(--color-surface-alt) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.chip-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink-600);
+  font: 600 13px/1 var(--sans);
+  cursor: pointer;
+  transition: background-color var(--ease), color var(--ease), border-color var(--ease);
+}
+
+.chip--active {
+  background: var(--color-ink-900);
+  border-color: var(--color-ink-900);
+  color: #fff;
+}
+
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  /* Keeps a jumped-to heading clear of the sticky chrome and the chip rail. */
+  scroll-margin-top: calc(var(--sticky-top) + 50px);
+}
+
+.menu-section__title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.menu-section__description {
+  font-size: 14px;
+  color: var(--color-ink-600);
+}
+
+/* -------------------------------------------------------------- item row */
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.item-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  transition: border-color var(--ease), transform 80ms ease;
+}
+
+.item-row:has(.item-row__open:active) {
+  transform: scale(0.99);
+  border-color: var(--color-ink-400);
+}
+
+/*
+  Stretched hit area: the button's content is only the text column, but this
+  overlay makes the entire row open the sheet — while the quick-add button, which
+  sits later in the DOM with a higher stacking order, stays independently
+  clickable. Nesting the two buttons instead would be invalid HTML.
+*/
+.item-row__open {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.item-row__open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+}
+
+.item-row__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.item-row__in-cart {
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Two lines is enough to judge a dish; more turns the list into a wall. */
+.item-row__description {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-ink-600);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-row__price {
+  margin-top: var(--space-1);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.item-row__media {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+}
+
+.item-row__image,
+.item-row__fallback {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-card);
+  object-fit: cover;
+  display: grid;
+  place-items: center;
+}
+
+.item-row__badge {
+  position: absolute;
+  top: var(--space-1);
+  left: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-warning-bg);
+  color: #b45309;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Overhangs the photo's bottom-right corner, the way food apps place quick-add. */
+.item-row__add {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 80ms ease, background-color var(--ease);
+}
+
+.item-row__add:active {
+  transform: scale(0.88);
+  background: var(--color-primary-hover);
+}
+
+/* Signals "has options" rather than "adds instantly" — taps fall through to the sheet. */
+.item-row__add--customize {
+  background: var(--color-surface);
+  color: var(--color-ink-900);
+  border-color: var(--color-line);
+  pointer-events: none;
+}
+
+.item-row--skeleton {
+  pointer-events: none;
+}
+
+.item-row--skeleton .item-row__open {
+  gap: var(--space-2);
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------ cart */
+
+.cart-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+
+.cart-item__image {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: var(--radius-input);
+  object-fit: cover;
+}
+
+.cart-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item__name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.cart-item__config {
+  font-size: 12px;
+  color: var(--color-ink-600);
+}
+
+.cart-item__price {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-list__more {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+
+.summary__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 14px;
+  color: var(--color-ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.summary__row--total {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-line);
+  font-size: 16px;
+  color: var(--color-ink-900);
+}
+
+.summary__row--total strong {
+  font-size: 18px;
+}
+
+/* -------------------------------------------------------------- checkout */
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/*
+  Checkout and cart both split into "the thing you're editing" and "what it
+  costs". On a phone those simply stack; from `lg` they become two columns with
+  the right one sticky (see the lg block).
+*/
+.checkout-fields,
+.checkout-aside,
+.cart-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.checkout-aside,
+.cart-summary {
+  gap: var(--space-4);
+}
+
+.summary__title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.form-section__title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  padding: var(--space-1);
+  border-radius: var(--radius-btn);
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-line);
+}
+
+.segmented__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 64px;
+  border: none;
+  border-radius: var(--radius-input);
+  background: transparent;
+  color: var(--color-ink-600);
+  font: 600 13px/1 var(--sans);
+  cursor: pointer;
+  transition: background-color var(--ease), color var(--ease), box-shadow var(--ease);
+}
+
+.segmented__option--active {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-card);
+}
+
+.party-size {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: 48px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-input);
+  background: var(--color-surface);
+}
+
+.party-size__value {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------- order tracking */
+
+.track-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+  padding: var(--space-4) 0 0;
+}
+
+.track-head__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.track-head__icon--cancelled {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.track-head__title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.track-head__meta {
+  font-size: 13px;
+  color: var(--color-ink-400);
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline__step {
+  position: relative;
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+}
+
+.timeline__step:last-child {
+  padding-bottom: 0;
+}
+
+/* The connector between markers; the last step has nothing to connect to. */
+.timeline__step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 22px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--color-line);
+}
+
+.timeline__step--done:not(:last-child)::before {
+  background: var(--color-success);
+}
+
+.timeline__marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-line);
+  background: var(--color-surface);
+  color: #fff;
+}
+
+.timeline__step--done .timeline__marker {
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.timeline__step--active .timeline__marker {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.timeline__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 1px;
+}
+
+.timeline__label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink-400);
+}
+
+.timeline__step--done .timeline__label {
+  color: var(--color-ink-900);
+}
+
+.timeline__step--active .timeline__label {
+  color: var(--color-primary);
+}
+
+.timeline__hint {
+  font-size: 13px;
+  color: var(--color-ink-600);
+}
+
+.receipt {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.receipt__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: 14px;
+}
+
+.receipt__qty {
+  font-weight: 700;
+  color: var(--color-ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.receipt__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.receipt__price {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================== sm · 600px */
+
+@media (min-width: 600px) {
+  /* Page padding steps up from 16px to 24px, per Design.md. */
+  .screen {
+    padding-left: calc(var(--space-6) + var(--sal));
+    padding-right: calc(var(--space-6) + var(--sar));
+  }
+
+  .home-section {
+    padding-left: calc(var(--space-6) + var(--sal));
+    padding-right: calc(var(--space-6) + var(--sar));
+  }
+
+  .active-order {
+    margin-left: calc(var(--space-6) + var(--sal));
+    margin-right: calc(var(--space-6) + var(--sar));
+  }
+
+  .rail,
+  .chip-rail {
+    margin-left: calc(-1 * (var(--space-6) + var(--sal)));
+    margin-right: calc(-1 * (var(--space-6) + var(--sar)));
+    padding-left: calc(var(--space-6) + var(--sal));
+    padding-right: calc(var(--space-6) + var(--sar));
+  }
+
+  .highlight-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .rail-card {
+    flex: 0 0 180px;
+  }
+
+  .home-hero__title {
+    font-size: 36px;
+  }
+
+  .home-hero__content {
+    padding-top: var(--space-16);
+  }
+}
+
+/* ============================================================== md · 768px */
+
+@media (min-width: 768px) {
+  /* Two columns of dish rows — a single column of full-width rows wastes half
+     the screen from here on. */
+  .item-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .cart-item__image {
+    width: 72px;
+    height: 72px;
+  }
+
+  .empty-state {
+    padding-top: var(--space-16);
+  }
+}
+
+/* ============================================================= lg · 1024px */
+
+@media (min-width: 1024px) {
+  /* The chip rail now sticks below the top nav rather than the app bar. */
+  .menu-section {
+    scroll-margin-top: calc(var(--sticky-top) + 60px);
+  }
+
+  /* The action bar is in normal flow from here, so there's nothing to clear. */
+  .screen--with-action {
+    padding-bottom: var(--space-16);
+  }
+
+  /* The horizontal rail becomes a grid: there is room to show every category
+     at once, and a scroll-snap carousel is a phone affordance. */
+  .rail {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+    overflow: visible;
+    margin: 0;
+    padding: var(--space-1) 0 var(--space-2);
+  }
+
+  .rail-card {
+    flex: initial;
+  }
+
+  .rail-card__image {
+    height: 130px;
+  }
+
+  /* Cart: lines on the left, summary parked alongside them. */
+  .screen--cart {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-areas:
+      'lines summary'
+      'more  summary';
+    align-content: start;
+    column-gap: var(--space-8);
+  }
+
+  .screen--cart .cart-list {
+    grid-area: lines;
+  }
+
+  .screen--cart .cart-list__more {
+    grid-area: more;
+  }
+
+  .screen--cart .cart-summary {
+    grid-area: summary;
+    position: sticky;
+    top: calc(var(--sticky-top) + var(--space-6));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  /* Checkout: form on the left at a readable width, order summary alongside.
+     A 1200px-wide text input is worse than a phone-width one. */
+  .screen--checkout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    column-gap: var(--space-8);
+  }
+
+  .screen--checkout .checkout-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: 620px;
+  }
+
+  .screen--checkout .checkout-aside {
+    position: sticky;
+    top: calc(var(--sticky-top) + var(--space-6));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  /* Forms that stand alone stay readable instead of stretching to the cap. */
+  .screen--form .form-section {
+    max-width: 620px;
+  }
+
+  .timeline,
+  .track-head {
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  .home-hero {
+    border-radius: var(--radius-card);
+    margin: var(--space-6) calc(var(--space-6) + var(--sar)) 0 calc(var(--space-6) + var(--sal));
+    overflow: hidden;
+    padding-top: var(--space-6);
+  }
+
+  .home-hero__bar {
+    display: none; /* brand and phone live in the top nav now */
+  }
+
+  .home-hero__content {
+    padding: var(--space-16) 0 var(--space-8);
+  }
+
+  .home-hero__title {
+    font-size: 44px;
+  }
+
+  .home-hero__search {
+    max-width: 420px;
+  }
+}
+
+/* ============================================================= xl · 1280px */
+
+@media (min-width: 1280px) {
+  .item-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rail {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .home-hero__title {
+    font-size: 52px;
+  }
+}

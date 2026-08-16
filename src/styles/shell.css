@@ -1,0 +1,836 @@
+/*
+  App chrome: the bars that persist across screens, plus the modal surface.
+  Everything here is safe-area aware — under Capacitor the WebView is drawn
+  edge-to-edge, so the status bar and the home indicator sit *on top of* this
+  layout unless each fixed element pads itself.
+*/
+
+.app {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100dvh;
+}
+
+/*
+  Flex column so a screen can claim the full height with `flex: 1` (the staff
+  login and clock-in screens paint a full-bleed background and need to).
+*/
+.app-content {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+  The content cap and the bottom-chrome padding belong to the customer screens
+  only — the staff back office needs the full window for its sidebar and tables.
+
+  1200px, per Design.md. Screens are responsible for expanding *into* that width
+  (more grid columns), not merely being centred in it: a single column of phone-
+  width content floating in a 1200px box is the same mobile-only layout with
+  more whitespace around it.
+*/
+.app--tabbed .app-content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-bottom: var(--bottom-chrome);
+}
+
+/* ---------------------------------------------------------------- app bar */
+
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-line);
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+
+.app-bar--transparent {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.app-bar__row {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  height: var(--app-bar-h);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-2);
+}
+
+.app-bar__title {
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: -0.01em;
+  /* A long category name must truncate, never wrap the bar to two lines. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-bar__icon-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  color: var(--color-ink-900);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--ease), transform 80ms ease;
+}
+
+.app-bar__icon-btn:active {
+  background: var(--color-surface-alt);
+  transform: scale(0.92);
+}
+
+.app-bar__spacer,
+.app-bar__trailing {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+}
+
+/* --------------------------------------------------------------- tab bar */
+
+.tab-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--color-line);
+  padding-bottom: var(--sab);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+
+.tab-bar__inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* Brand belongs to the desktop header presentation only. */
+.tab-bar__brand {
+  display: none;
+}
+
+.tab-bar__tabs {
+  flex: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+/*
+  While the on-screen keyboard is up there is no bottom edge to anchor to — the
+  bar would otherwise float across the middle of a checkout form. Set by
+  `watchKeyboard()` in src/lib/native.ts.
+*/
+body.keyboard-open .tab-bar,
+body.keyboard-open .cart-bar {
+  display: none;
+}
+
+.tab-bar__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: var(--tab-bar-h);
+  text-decoration: none;
+  color: var(--color-ink-400);
+  transition: color var(--ease);
+}
+
+.tab-bar__tab--active {
+  color: var(--color-primary);
+}
+
+.tab-bar__tab:active {
+  opacity: 0.6;
+}
+
+.tab-bar__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.tab-bar__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tab-bar__badge {
+  position: absolute;
+  top: -5px;
+  left: 60%;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  border: 2px solid var(--color-surface);
+}
+
+/* -------------------------------------------------------------- cart bar */
+
+/* Floats directly above the tab bar while browsing. */
+.cart-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tab-bar-h) + var(--sab));
+  z-index: 35;
+  padding: var(--space-2) calc(var(--space-4) + var(--sal)) var(--space-2) calc(var(--space-4) + var(--sar));
+  pointer-events: none;
+}
+
+.cart-bar__button {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 688px;
+  margin: 0 auto;
+  height: 52px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-btn);
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(220, 75, 52, 0.35);
+  transition: transform 80ms ease, background-color var(--ease);
+  animation: fade-in-up 200ms ease both;
+}
+
+.cart-bar__button:active {
+  transform: scale(0.98);
+  background: var(--color-primary-hover);
+}
+
+.cart-bar__count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 13px;
+}
+
+.cart-bar__label {
+  flex: 1;
+}
+
+.cart-bar__total {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ action bar */
+
+/*
+  The primary CTA of a screen, pinned above the tab bar. Screens that use one
+  must carry `.screen--with-action` so their content clears it.
+*/
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tab-bar-h) + var(--sab));
+  z-index: 35;
+  padding: var(--space-3) calc(var(--space-4) + var(--sal)) var(--space-3) calc(var(--space-4) + var(--sar));
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: var(--shadow-raised);
+}
+
+/*
+  With the keyboard up the tab bar is hidden, so the action bar takes its place
+  at the very bottom instead of hovering where the tab bar used to be.
+*/
+body.keyboard-open .action-bar {
+  bottom: 0;
+}
+
+/* On a screen with no tab bar (the staff clock-in), the bar owns the bottom edge
+   and therefore the bottom safe-area inset too. */
+.action-bar--standalone {
+  bottom: 0;
+  padding-bottom: calc(var(--space-3) + var(--sab));
+}
+
+/* display:flex, not the .btn default inline-flex — an inline-level box ignores
+   `margin: 0 auto` and the button would hug the left edge on a wide screen. */
+.action-bar__button {
+  display: flex;
+  width: 100%;
+  max-width: 688px;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+
+.action-bar__button > span:only-child {
+  margin: 0 auto;
+}
+
+.action-bar__price {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------- bottom sheet */
+
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(24, 24, 27, 0.45);
+  animation: sheet-fade 200ms ease both;
+}
+
+.sheet-overlay--closing {
+  animation: sheet-fade 180ms ease both reverse;
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  /* Never full height: the strip of dimmed content above is the affordance that
+     says this is dismissible rather than a new screen. */
+  max-height: 92dvh;
+  background: var(--color-surface);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-up var(--ease-spring) both;
+  transition: transform var(--ease-spring);
+}
+
+.sheet--closing {
+  animation: sheet-up 180ms ease both reverse;
+}
+
+@keyframes sheet-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Generous hit area around the small visible grabber. */
+.sheet__grabber-zone {
+  padding: var(--space-3) 0 var(--space-1);
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  touch-action: none;
+}
+
+.sheet__grabber {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-line);
+}
+
+.sheet__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-3);
+}
+
+.sheet__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet__title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sheet__subtitle {
+  margin-top: var(--space-1);
+  font-size: 14px;
+  color: var(--color-ink-600);
+}
+
+.sheet__close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-alt);
+  color: var(--color-ink-600);
+  cursor: pointer;
+}
+
+.sheet__close:active {
+  transform: scale(0.92);
+}
+
+.sheet__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 0 var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sheet__hero {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+
+.sheet__allergens {
+  font-size: 12px;
+  color: var(--color-ink-400);
+}
+
+.sheet__footer {
+  padding: var(--space-3) var(--space-4) calc(var(--space-3) + var(--sab));
+  border-top: 1px solid var(--color-line);
+  background: var(--color-surface);
+}
+
+.sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sheet-actions__submit {
+  flex: 1;
+  justify-content: space-between;
+}
+
+.sheet-actions__price {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------- option pickers */
+
+.option-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.option-group__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0 0 var(--space-2);
+}
+
+.option-group__name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.option-group__required {
+  color: var(--color-primary);
+}
+
+.option-group__hint {
+  font-size: 12px;
+  color: var(--color-ink-400);
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-input);
+  cursor: pointer;
+  transition: border-color var(--ease), background-color var(--ease);
+}
+
+.option-row--selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.option-row input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.option-row__label {
+  flex: 1;
+  font-size: 15px;
+}
+
+.option-row__price {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------ quantity stepper */
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  flex-shrink: 0;
+}
+
+.stepper__btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-alt);
+  color: var(--color-ink-900);
+  cursor: pointer;
+  transition: background-color var(--ease), transform 80ms ease, opacity var(--ease);
+}
+
+.stepper__btn:active:not(:disabled) {
+  transform: scale(0.9);
+  background: var(--color-line);
+}
+
+.stepper__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.stepper__value {
+  min-width: 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- skeletons */
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.skeleton {
+  display: block;
+  background: var(--color-line);
+  border-radius: var(--radius-input);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton--search {
+  height: 48px;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-4);
+}
+
+.skeleton--chip {
+  width: 84px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.skeleton--line {
+  height: 12px;
+  width: 70%;
+}
+
+.skeleton--line-lg {
+  height: 15px;
+  width: 45%;
+}
+
+.skeleton--line-sm {
+  width: 25%;
+}
+
+.skeleton--thumb {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-card);
+  flex-shrink: 0;
+}
+
+/* ============================================================== md · 768px */
+
+@media (min-width: 768px) {
+  /* Sheets stop being full-bleed once there is room around them. */
+  .sheet {
+    max-width: 600px;
+  }
+
+  .sheet__hero {
+    height: 240px;
+  }
+}
+
+/* ============================================================== lg · 1024px
+   The desktop switch. Below this the app is a phone layout with a bottom tab
+   bar (which is what the native shell always is); from here it presents as a
+   normal website: a sticky top nav, a static page heading, and no fixed bottom
+   chrome. Same DOM in both cases — only presentation changes.
+*/
+
+@media (min-width: 1024px) {
+  :root {
+    /* The top nav is now what sticky in-page elements must clear. */
+    --sticky-top: var(--nav-h);
+    --bottom-chrome: 0px;
+  }
+
+  /* --- primary nav: bottom tab bar becomes a top header --- */
+
+  .tab-bar {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    border-top: none;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 0;
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+
+  .tab-bar__inner {
+    justify-content: space-between;
+    gap: var(--space-8);
+    height: var(--nav-h);
+  }
+
+  .tab-bar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-ink-900);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tab-bar__logo {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-tile);
+    object-fit: cover;
+  }
+
+  .tab-bar__tabs {
+    flex: 0 0 auto;
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  /* Icon and label sit side by side in a pill, not stacked in a column. */
+  .tab-bar__tab {
+    flex-direction: row;
+    gap: var(--space-2);
+    height: 40px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink-600);
+    transition: background-color var(--ease), color var(--ease);
+  }
+
+  .tab-bar__tab:hover {
+    background: var(--color-surface-alt);
+    color: var(--color-ink-900);
+  }
+
+  .tab-bar__tab--active {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+
+  .tab-bar__label {
+    font-size: 14px;
+  }
+
+  .tab-bar__badge {
+    top: -6px;
+    left: 55%;
+  }
+
+  /* --- app bar becomes a page heading --- */
+
+  .app-bar {
+    position: static;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: none;
+    padding-top: 0;
+  }
+
+  .app-bar__row {
+    grid-template-columns: auto 1fr;
+    height: auto;
+    padding: var(--space-8) var(--space-6) 0;
+    gap: var(--space-1);
+  }
+
+  .app-bar__title {
+    text-align: left;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Browser back exists here, and the nav covers the rest. */
+  .app-bar__spacer,
+  .app-bar__trailing {
+    display: none;
+  }
+
+  .app-bar__icon-btn {
+    width: 36px;
+    height: 36px;
+    margin-left: calc(-1 * var(--space-2));
+  }
+
+  /* --- bottom chrome un-fixes --- */
+
+  /* The cart lives in the top nav on desktop, badge and all. */
+  .cart-bar {
+    display: none;
+  }
+
+  /*
+    A CTA welded to the bottom of a 1080px-tall window reads as phone chrome.
+    It becomes an ordinary button at the end of its screen instead.
+  */
+  .action-bar {
+    position: static;
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .action-bar__button {
+    max-width: 360px;
+    margin: 0;
+  }
+
+  /* --- sheets become centred dialogs --- */
+
+  .sheet-overlay {
+    align-items: center;
+    padding: var(--space-6);
+  }
+
+  .sheet {
+    border-radius: var(--radius-sheet);
+    max-height: 84dvh;
+    animation: sheet-zoom var(--ease-spring) both;
+  }
+
+  .sheet--closing {
+    animation: sheet-zoom 180ms ease both reverse;
+  }
+
+  /* Dragging a centred dialog down to dismiss makes no sense with a cursor. */
+  .sheet__grabber-zone {
+    display: none;
+  }
+
+  /* The grabber zone above the header is gone, so the header supplies the gap. */
+  .sheet__header {
+    padding-top: var(--space-4);
+  }
+
+  .sheet__footer {
+    padding-bottom: var(--space-4);
+  }
+
+  @keyframes sheet-zoom {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}

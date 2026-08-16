@@ -1,111 +1,432 @@
+/*
+  Kool Snack — Design System foundation (see Design.md, the single source of
+  truth). Tokens, base typography, and reusable component classes live here so
+  every screen pulls from the same definitions instead of inventing one-off
+  values. Shell chrome lives in styles/shell.css, screen layout in
+  styles/screens.css, and the staff back-office in App.css.
+*/
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Color tokens */
+  --color-primary: #dc4b34;
+  --color-primary-hover: #b93d2a;
+  --color-primary-soft: #fdeeeb;
+  --color-success: #16a34a;
+  --color-success-bg: #dcfce7;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fee2e2;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --color-ink-900: #18181b;
+  --color-ink-600: #52525b;
+  --color-ink-400: #a1a1aa;
+  --color-line: #e4e4e7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafafa;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  --tint-pizza: #fef2f0;
+  --tint-pizza-fg: #dc4b34;
+  --tint-burger: #fef3c7;
+  --tint-burger-fg: #b45309;
+  --tint-drink: #e0f2fe;
+  --tint-drink-fg: #0369a1;
+  --tint-salad: #ecfdf5;
+  --tint-salad-fg: #047857;
+
+  /* Spacing scale — margin/padding/gap must use these, nothing arbitrary */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radii */
+  --radius-card: 12px;
+  --radius-btn: 10px;
+  --radius-input: 8px;
+  --radius-tile: 10px;
+  --radius-sheet: 20px;
+  --radius-pill: 999px;
+
+  --ease: 150ms ease;
+  --ease-spring: 260ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  --sans: 'Inter Variable', 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  /*
+    Safe-area insets. Two sources, because neither alone is enough:
+    `env()` is what iOS (and Chrome 140+) report, while Capacitor's Android
+    SystemBars plugin sets `--safe-area-inset-*` as a fallback for older
+    WebViews. Both resolve to 0 when absent, so max() picks whichever is real.
+    Nothing may read env() directly — always go through these.
+  */
+  --sat: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --sar: max(env(safe-area-inset-right, 0px), var(--safe-area-inset-right, 0px));
+  --sab: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+  --sal: max(env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px));
+
+  /*
+    Breakpoint ladder. Mobile-first: base styles are the phone layout, and each
+    step up is a `min-width` query. Use these four and no others — a one-off
+    breakpoint for a single component is how a layout stops being predictable.
+
+      sm   600px   large phone / small tablet portrait
+      md   768px   tablet
+      lg  1024px   desktop — bottom tab bar becomes a top nav here
+      xl  1280px   wide desktop — widest grids
+
+    Media queries can't read custom properties, so the numbers are repeated
+    literally in each file; these names are the shared vocabulary for them.
+  */
+
+  /* Max content width on desktop, per Design.md. */
+  --content-max: 1200px;
+
+  /* Fixed chrome heights, excluding safe-area padding. */
+  --app-bar-h: 52px;
+  --tab-bar-h: 58px;
+  --nav-h: 64px; /* the desktop top nav */
+  --action-bar-h: 76px;
+
+  /* Total height the bottom chrome occupies — what screens must clear. */
+  --bottom-chrome: calc(var(--tab-bar-h) + var(--sab));
+
+  /*
+    Offset that sticky in-page elements (the menu chip rail) must clear. On
+    phones that is the sticky app bar; from `lg` the app bar becomes a static
+    page heading and the top nav takes over. Redefined in the lg block below.
+  */
+  --sticky-top: calc(var(--app-bar-h) + var(--sat));
+
+  --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.04);
+  --shadow-raised: 0 -1px 0 var(--color-line), 0 -8px 24px rgba(24, 24, 27, 0.06);
+  --shadow-sheet: 0 -8px 40px rgba(24, 24, 27, 0.18);
+
+  font: 15px/1.6 var(--sans);
+  font-weight: 400;
+  color-scheme: light;
+  color: var(--color-ink-900);
+  background: var(--color-surface-alt);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+* {
   box-sizing: border-box;
+}
+
+html {
+  /* Keeps the page from bouncing past the fixed bars on iOS. */
+  overscroll-behavior-y: none;
 }
 
 body {
   margin: 0;
+  background: var(--color-surface-alt);
+  overscroll-behavior-y: none;
+
+  /*
+    Native-app touch behaviour. Long-pressing a heading to get a text selection
+    handle, or a grey flash on every tap, is what makes a WebView feel like a web
+    page. Selection is re-enabled below for the places it is actually useful.
+  */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+input,
+textarea,
+select,
+[data-selectable] {
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+button,
+a,
+label,
+[role='button'] {
+  /* Removes the ~300ms click delay without disabling scrolling. */
+  touch-action: manipulation;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3 {
+  color: var(--color-ink-900);
+  margin: 0;
+  font-weight: 600;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+img {
+  max-width: 100%;
 }
 
-code {
+/* Typography scale — apply the class matching the role, never a bespoke size */
+
+.text-display {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.text-h1 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.text-h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.text-body {
   font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.text-small {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.text-micro {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.text-eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.text-muted {
+  color: var(--color-ink-600);
+}
+
+/* Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-btn);
+  font: 600 15px/1 var(--sans);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--ease), border-color var(--ease), transform 80ms ease, opacity var(--ease);
+  white-space: nowrap;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-ink-900);
+  border: 1px solid var(--color-line);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-ink-400);
+}
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+/* Cards */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+  transition: border-color var(--ease);
+}
+
+/* Badges / pills */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge-success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.badge-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.badge-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.badge-primary {
+  background: var(--tint-pizza);
+  color: var(--color-primary);
+}
+
+/* Category icon fallback tile */
+
+.icon-tile {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-tile);
+  display: grid;
+  place-items: center;
+}
+
+.icon-tile--pizza {
+  background: var(--tint-pizza);
+  color: var(--tint-pizza-fg);
+}
+
+.icon-tile--burger {
+  background: var(--tint-burger);
+  color: var(--tint-burger-fg);
+}
+
+.icon-tile--drink {
+  background: var(--tint-drink);
+  color: var(--tint-drink-fg);
+}
+
+.icon-tile--salad {
+  background: var(--tint-salad);
+  color: var(--tint-salad-fg);
+}
+
+/* Forms */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-600);
+}
+
+.field input,
+.field textarea,
+.field select {
+  min-height: 48px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-line);
+  padding: 0 var(--space-3);
+  /*
+    16px minimum: iOS Safari/WKWebView zooms the whole page in when a focused
+    input's font-size is below 16px, which on a fixed-bar layout leaves the app
+    permanently scrolled sideways.
+  */
+  font: 400 16px/1.5 var(--sans);
+  color: var(--color-ink-900);
+  background: var(--color-surface);
+  appearance: none;
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.field textarea {
+  min-height: auto;
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(220, 75, 52, 0.15);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+/* Motion */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in-up {
+    animation: fade-in-up 200ms ease both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
