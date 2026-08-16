@@ -1,21 +1,5 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-
-  "//": "SPA fallback. The app uses BrowserRouter, so a hard load of /menu or /staff/admin must serve index.html instead of 404ing. Vercel matches the filesystem before rewrites, so real files under /assets, /icons etc. are served untouched and don't need excluding here.",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-
-  "headers": [
-    {
-      "//": "Vite fingerprints these filenames, so they can be cached forever.",
-      "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
-    {
-      "source": "/manifest.webmanifest",
-      "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }]
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
