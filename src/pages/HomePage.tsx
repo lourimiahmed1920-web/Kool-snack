@@ -4,6 +4,7 @@ import { HomeHero } from '../components/HomeHero'
 import { CategoryRail } from '../components/CategoryRail'
 import { ActiveOrderCard } from '../components/ActiveOrderCard'
 import { browsableCategories } from '../lib/menuTree'
+import { formatHours, type ServiceHours } from '../lib/openingHours'
 import type { MenuCategory } from '../types/menu'
 
 interface HomePageProps {
@@ -12,16 +13,17 @@ interface HomePageProps {
   restaurantName?: string
   phone?: string | null
   address?: string | null
+  hours: ServiceHours
 }
 
 const HIGHLIGHTS = [
   { Icon: ShieldCheck, title: '100% Halal', text: 'Ausschließlich halal-zertifizierte Zutaten.' },
   { Icon: ChefHat, title: 'Frisch zubereitet', text: 'Pizza aus dem Steinofen, alles frisch gemacht.' },
   { Icon: Bike, title: 'Schnelle Lieferung', text: 'In Neuss & Umgebung, meist in 15–25 Minuten.' },
-  { Icon: Clock, title: 'Täglich geöffnet', text: '12:00 bis 22:00 Uhr, auch an Feiertagen.' },
+  { Icon: Clock, title: 'Täglich geöffnet', text: 'Auch an Feiertagen für dich da.' },
 ]
 
-export function HomePage({ categories, loading, restaurantName, phone, address }: HomePageProps) {
+export function HomePage({ categories, loading, restaurantName, phone, address, hours }: HomePageProps) {
   const cards = browsableCategories(categories)
 
   return (
@@ -89,7 +91,7 @@ export function HomePage({ categories, loading, restaurantName, phone, address }
             </span>
             <span className="info-row__body">
               <span className="info-row__label">Öffnungszeiten</span>
-              <span className="info-row__value">Täglich 12:00 – 22:00 Uhr</span>
+              <span className="info-row__value">Täglich {formatHours(hours)} Uhr</span>
             </span>
           </div>
         </div>

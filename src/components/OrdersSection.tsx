@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useOrders } from '../hooks/useOrders'
+import { formatOrderNumber } from '../lib/orderStatus'
 import { CreateOrderPanel } from './CreateOrderPanel'
 import type { OrderStatus } from '../types/order'
 
@@ -67,7 +68,8 @@ export function OrdersSection({ restaurantId }: OrdersSectionProps) {
         <ul className="time-entry-list" style={{ maxWidth: 640 }}>
           {orders.map((order) => (
             <li key={order.id} className="time-entry" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'baseline' }}>
+                <span className="order-number">{formatOrderNumber(order.daily_number)}</span>
                 <span className="time-entry__date">{dateTimeFormat.format(new Date(order.created_at))}</span>
                 <span className="time-entry__meta">
                   {ORDER_TYPE_LABELS[order.order_type] ?? order.order_type} · {currency.format(order.total_amount)}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { OrderRow, OrderStatus } from '../types/order'
 
-const ORDER_SELECT = 'id, order_type, status, total_amount, notes, created_at, order_items(id, quantity, unit_price, notes, menu_items(name))'
+const ORDER_SELECT = 'id, daily_number, order_type, status, total_amount, notes, created_at, order_items(id, quantity, unit_price, notes, menu_items(name))'
 
 export function useOrders(restaurantId: string | null | undefined) {
   const [orders, setOrders] = useState<OrderRow[]>([])

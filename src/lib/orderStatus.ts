@@ -27,3 +27,13 @@ export function stepIndex(status: OrderStatus): number {
 export function isOrderActive(status: OrderStatus): boolean {
   return status !== 'completed' && status !== 'cancelled'
 }
+
+/**
+ * The number staff call out across a service. Falls back to a short slice of the
+ * UUID for any row that somehow has no sequence, so the kitchen always has
+ * *something* to read out rather than an empty space.
+ */
+export function formatOrderNumber(dailyNumber: number | null | undefined, fallbackId?: string): string {
+  if (dailyNumber != null) return `#${dailyNumber}`
+  return fallbackId ? `#${fallbackId.slice(0, 8)}` : '#—'
+}

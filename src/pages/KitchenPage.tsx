@@ -1,6 +1,7 @@
 import { useAuth } from '../contexts/AuthContext'
 import { useOrders } from '../hooks/useOrders'
 import type { OrderStatus } from '../types/order'
+import { formatOrderNumber } from '../lib/orderStatus'
 
 const currency = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' })
 const timeFormat = new Intl.DateTimeFormat('de-DE', { timeStyle: 'short' })
@@ -34,7 +35,8 @@ export function KitchenPage() {
             const action = NEXT_ACTION[order.status]
             return (
               <li key={order.id} className="time-entry" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline' }}>
+                  <span className="order-number">{formatOrderNumber(order.daily_number)}</span>
                   <span className="time-entry__date">{timeFormat.format(new Date(order.created_at))}</span>
                   <span className="time-entry__meta">{currency.format(order.total_amount)}</span>
                 </div>

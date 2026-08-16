@@ -7,10 +7,14 @@ import { saveLastOrder } from '../lib/orderTracking'
 import { toUserMessage } from '../lib/errors'
 import { currency } from '../lib/format'
 import { haptic } from '../lib/native'
+import { CLOSED_MESSAGE, formatHours, type ServiceHours } from '../lib/openingHours'
+import { useIsOpen } from '../hooks/useIsOpen'
 import type { OrderType } from '../types/order'
 
 interface CheckoutPageProps {
   restaurantId?: string
+  hours: ServiceHours
+  timeZone?: string | null
 }
 
 const ORDER_TYPES: { value: OrderType; label: string; Icon: typeof Utensils }[] = [
@@ -25,9 +29,10 @@ const ORDER_TYPES: { value: OrderType; label: string; Icon: typeof Utensils }[] 
  * itself, so nothing this form sends about money is trusted, and the guest INSERT
  * policies on `orders`/`order_items` were dropped so the RPC can't be bypassed.
  */
-export function CheckoutPage({ restaurantId }: CheckoutPageProps) {
+export function CheckoutPage({ restaurantId, hours, timeZone }: CheckoutPageProps) {
   const { lines, total, clear } = useCart()
   const navigate = useNavigate()
+  const isOpen = useIsOpen(hours, timeZone)
 
   const [orderType, setOrderType] = useState<OrderType>('pickup')
   const [name, setName] = useState('')
@@ -43,6 +48,14 @@ export function CheckoutPage({ restaurantId }: CheckoutPageProps) {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     if (!restaurantId || lines.length === 0) return
+
+    // Re-checked at submit, not just at render: the form can sit open across
+    // closing time. This is a UX gate only — see the note in lib/openingHours.
+    if (!isOpen) {
+      haptic('error')
+      setError(`${CLOSED_MESSAGE} Bestellungen nehmen wir täglich von ${formatHours(hours)} Uhr entgegen.`)
+      return
+    }
 
     setSubmitting(true)
     setError(null)
@@ -68,11 +81,22 @@ export function CheckoutPage({ restaurantId }: CheckoutPageProps) {
       })),
     })
 
-    const created = (data as { order_id: string; access_token: string; total_amount: number }[] | null)?.[0]
+    const created = (
+      data as { order_id: string; access_token: string; total_amount: number; daily_number: number | null }[] | null
+    )?.[0]
 
     if (rpcError || !created) {
       haptic('error')
-      setError(toUserMessage(rpcError, 'Bestellung konnte nicht gesendet werden. Bitte versuche es erneut.'))
+      // KS001 is raised deliberately by create_guest_order when the restaurant is
+      // closed. It is a user-facing message, so it passes through instead of being
+      // replaced by the generic fallback — this is the server-side gate the
+      // browser check cannot enforce, and the customer needs to know why.
+      const closed = (rpcError as { code?: string } | null)?.code === 'KS001'
+      setError(
+        closed
+          ? `${CLOSED_MESSAGE} Bestellungen nehmen wir täglich von ${formatHours(hours)} Uhr entgegen.`
+          : toUserMessage(rpcError, 'Bestellung konnte nicht gesendet werden. Bitte versuche es erneut.'),
+      )
       setSubmitting(false)
       return
     }
@@ -87,6 +111,7 @@ export function CheckoutPage({ restaurantId }: CheckoutPageProps) {
         orderId: created.order_id,
         lines: confirmedLines,
         total: created.total_amount,
+        dailyNumber: created.daily_number,
         orderType,
         name,
       },
@@ -96,6 +121,12 @@ export function CheckoutPage({ restaurantId }: CheckoutPageProps) {
   return (
     <form className="screen screen--with-action screen--checkout" onSubmit={handleSubmit}>
       <div className="checkout-fields">
+        {!isOpen && (
+          <p className="screen-state screen-state--error">
+            {CLOSED_MESSAGE} Bestellungen nehmen wir täglich von {formatHours(hours)} Uhr entgegen.
+          </p>
+        )}
+
         <section className="form-section">
           <h2 className="form-section__title">Wie möchtest du bestellen?</h2>
           <div className="segmented" role="radiogroup" aria-label="Bestellart">
@@ -189,9 +220,15 @@ export function CheckoutPage({ restaurantId }: CheckoutPageProps) {
         </div>
 
         <div className="action-bar">
-          <button type="submit" className="btn btn-primary action-bar__button" disabled={submitting || !restaurantId}>
+          <button
+            type="submit"
+            className="btn btn-primary action-bar__button"
+            disabled={submitting || !restaurantId || !isOpen}
+          >
             {submitting ? (
               <span>Wird gesendet…</span>
+            ) : !isOpen ? (
+              <span>Zurzeit geschlossen</span>
             ) : (
               <>
                 <span>Jetzt bestellen</span>

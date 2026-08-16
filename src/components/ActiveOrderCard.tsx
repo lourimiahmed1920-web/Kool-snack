@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { getLastOrder } from '../lib/orderTracking'
 import { useOrderTracking } from '../hooks/useOrderTracking'
-import { isOrderActive, stepIndex, STATUS_STEPS } from '../lib/orderStatus'
+import { formatOrderNumber, isOrderActive, stepIndex, STATUS_STEPS } from '../lib/orderStatus'
 import { currency } from '../lib/format'
 
 /**
@@ -35,7 +35,7 @@ export function ActiveOrderCard() {
       </div>
 
       <span className="active-order__meta">
-        #{last.id.slice(0, 8)} · {currency.format(order.total_amount)}
+        {formatOrderNumber(order.daily_number, last.id)} · {currency.format(order.total_amount)}
       </span>
     </Link>
   )

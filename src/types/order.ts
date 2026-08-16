@@ -11,6 +11,12 @@ export interface OrderItemRow {
 
 export interface OrderRow {
   id: string
+  /**
+   * Human-readable per-day sequence, assigned by the trg_orders_daily_number
+   * trigger. Nullable only in theory (rows predating the column were
+   * backfilled) — treat a missing value as "not numbered" rather than crashing.
+   */
+  daily_number: number | null
   order_type: OrderType
   status: OrderStatus
   total_amount: number

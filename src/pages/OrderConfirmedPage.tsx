@@ -5,13 +5,15 @@ import type { CartLine } from '../types/cart'
 import type { OrderStatus, OrderType } from '../types/order'
 import { useOrderTracking } from '../hooks/useOrderTracking'
 import { getLastOrder, saveLastOrder } from '../lib/orderTracking'
-import { ORDER_TYPE_LABELS, STATUS_STEPS, stepIndex } from '../lib/orderStatus'
+import { formatOrderNumber, ORDER_TYPE_LABELS, STATUS_STEPS, stepIndex } from '../lib/orderStatus'
 import { currency } from '../lib/format'
 
 interface ConfirmationState {
   orderId: string
   lines: CartLine[]
   total: number
+  /** Returned by create_guest_order, so the number shows before the first poll lands. */
+  dailyNumber: number | null
   orderType: OrderType
   name: string
 }
@@ -126,7 +128,8 @@ export function OrderConfirmedPage() {
           {status === 'cancelled' ? 'Bestellung storniert' : name ? `Danke, ${name}!` : 'Deine Bestellung'}
         </h2>
         <p className="track-head__meta">
-          {ORDER_TYPE_LABELS[orderType]} · Nr. {orderId.slice(0, 8)}
+          {ORDER_TYPE_LABELS[orderType]} · Bestellnummer{' '}
+          {formatOrderNumber(order?.daily_number ?? (hasCheckoutState ? navState.dailyNumber : null), orderId)}
         </p>
       </div>
 

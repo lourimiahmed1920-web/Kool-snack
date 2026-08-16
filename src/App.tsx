@@ -24,6 +24,7 @@ import { useHardwareBack, useKeyboardClass, useScrollToTopOnNavigate } from './h
 import { CartProvider } from './contexts/CartContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { browsableCategories } from './lib/menuTree'
+import { parseHours } from './lib/openingHours'
 import { slugify } from './lib/slug'
 import type { MenuCategory } from './types/menu'
 import type { Restaurant } from './hooks/useRestaurant'
@@ -75,6 +76,8 @@ function resolveChrome(pathname: string, categories: MenuCategory[]): Chrome | n
 
 function AppShell({ categories, loading, error, restaurant }: AppShellProps) {
   const location = useLocation()
+  // Parsed once here so the displayed hours and the checkout gate read the same row.
+  const hours = parseHours(restaurant?.opening_time, restaurant?.closing_time)
   const chrome = resolveChrome(location.pathname, categories)
 
   useScrollToTopOnNavigate()
@@ -110,13 +113,19 @@ function AppShell({ categories, loading, error, restaurant }: AppShellProps) {
                   restaurantName={restaurant?.name}
                   phone={restaurant?.phone}
                   address={restaurant?.address}
+                  hours={hours}
                 />
               }
             />
             <Route path="/menu" element={<MenuPage categories={categories} loading={loading} />} />
             <Route path="/menu/:slug" element={<CategoryPage categories={categories} loading={loading} />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage restaurantId={restaurant?.id} />} />
+            <Route path="/cart" element={<CartPage hours={hours} timeZone={restaurant?.timezone} />} />
+            <Route
+              path="/checkout"
+              element={
+                <CheckoutPage restaurantId={restaurant?.id} hours={hours} timeZone={restaurant?.timezone} />
+              }
+            />
             <Route path="/order-confirmed/:orderId" element={<OrderConfirmedPage />} />
             <Route path="/reservierung" element={<ReservationPage restaurantId={restaurant?.id} />} />
 

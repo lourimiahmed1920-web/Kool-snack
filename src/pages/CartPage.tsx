@@ -4,6 +4,14 @@ import { useCart } from '../contexts/CartContext'
 import { QuantityStepper } from '../components/QuantityStepper'
 import { currency } from '../lib/format'
 import { haptic } from '../lib/native'
+import { CLOSED_MESSAGE, formatHours, type ServiceHours } from '../lib/openingHours'
+import { useIsOpen } from '../hooks/useIsOpen'
+
+interface CartPageProps {
+  hours: ServiceHours
+  /** Restaurant timezone — service hours are judged in local time, not the visitor's. */
+  timeZone?: string | null
+}
 
 /**
  * Step one of checkout: review what's in the basket. Contact details live on the
@@ -11,9 +19,10 @@ import { haptic } from '../lib/native'
  * scrolls from items through to a submit button is a web checkout, and it buries
  * the total the customer is actually deciding on.
  */
-export function CartPage() {
+export function CartPage({ hours, timeZone }: CartPageProps) {
   const { lines, itemCount, total, updateQuantity } = useCart()
   const navigate = useNavigate()
+  const isOpen = useIsOpen(hours, timeZone)
 
   if (lines.length === 0) {
     return (
@@ -69,6 +78,12 @@ export function CartPage() {
         parked in a sticky right-hand column from `lg` (see .screen--cart).
       */}
       <div className="cart-summary">
+        {!isOpen && (
+          <p className="screen-state screen-state--error">
+            {CLOSED_MESSAGE} Bestellungen nehmen wir täglich von {formatHours(hours)} Uhr entgegen.
+          </p>
+        )}
+
         <div className="summary">
           <div className="summary__row">
             <span>
@@ -86,13 +101,14 @@ export function CartPage() {
           <button
             type="button"
             className="btn btn-primary action-bar__button"
+            disabled={!isOpen}
             onClick={() => {
               haptic('medium')
               navigate('/checkout')
             }}
           >
-            <span>Zur Kasse</span>
-            <span className="action-bar__price">{currency.format(total)}</span>
+            <span>{isOpen ? 'Zur Kasse' : 'Zurzeit geschlossen'}</span>
+            {isOpen && <span className="action-bar__price">{currency.format(total)}</span>}
           </button>
         </div>
       </div>

@@ -1507,3 +1507,13 @@ body.keyboard-open .staff-tabbar {
     top: var(--space-4);
   }
 }
+
+/* Daily order number — the thing staff call out across a service, so it reads
+   as the primary identifier of the row, not a metadata footnote. */
+.order-number {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
