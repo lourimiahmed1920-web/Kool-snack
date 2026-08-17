@@ -492,7 +492,11 @@
   flex-wrap: wrap;
 }
 
-.menu-admin-variants__add input {
+.menu-admin-variants__add input,
+.menu-admin-variants__add select,
+.menu-admin-option-group__edit input,
+.menu-admin-option-group__edit select,
+.menu-admin-option-list__edit input {
   font: inherit;
   font-size: 13px;
   padding: 8px 10px;
@@ -502,8 +506,89 @@
   color: var(--color-ink-900);
 }
 
-.menu-admin-variants__add input[type='number'] {
+.menu-admin-variants__add input[type='number'],
+.menu-admin-option-group__edit input[type='number'],
+.menu-admin-option-list__edit input[type='number'] {
   width: 110px;
+}
+
+/* Wider than the other numeric fields so the "leer = unbegrenzt" placeholder fits. */
+.menu-admin-variants__add input.menu-admin-max-input,
+.menu-admin-option-group__edit input.menu-admin-max-input {
+  width: 180px;
+}
+
+/* Extras / option groups, per dish. Mirrors the variants block above it: same
+   separator, same title and add-row styling, one nesting level deeper. */
+
+.menu-admin-options {
+  border-top: 1px solid var(--color-line);
+  padding-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.menu-admin-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-alt);
+}
+
+.menu-admin-option-group__header,
+.menu-admin-option-group__edit,
+.menu-admin-option-group__confirm {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.menu-admin-option-group__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-900);
+}
+
+/* Pushes the row's controls to the trailing edge, whichever set is showing. */
+.menu-admin-option-group__header > .menu-admin-hint {
+  margin-left: auto;
+}
+
+.menu-admin-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.menu-admin-option-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 13px;
+  color: var(--color-ink-600);
+}
+
+.menu-admin-option-list__label {
+  flex: 1;
+  color: var(--color-ink-900);
+}
+
+.menu-admin-option-list__edit,
+.menu-admin-option-group__edit {
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* The label field takes the slack; the numeric fields keep their fixed width. */
+.menu-admin-option-list__edit input[type='text'],
+.menu-admin-option-group__edit input[type='text'] {
+  flex: 1;
+  min-width: 140px;
 }
 
 .menu-admin-form__actions {

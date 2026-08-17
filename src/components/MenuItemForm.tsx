@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { uploadMenuImage } from '../lib/menuImageUpload'
 import { toUserMessage } from '../lib/errors'
 import { resolveMenuItemImage } from '../lib/menuImages'
+import { MenuOptionGroups } from './MenuOptionGroups'
 import type { MenuItem, MenuItemVariant } from '../types/menu'
 
 const currency = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' })
@@ -301,6 +302,17 @@ export function MenuItemForm({
           </>
         )}
       </div>
+
+      {/* Same rule as the variants above: the group rows hang off the dish id, so
+          the dish has to exist before they can be written. */}
+      {isEdit ? (
+        <MenuOptionGroups menuItemId={itemId} />
+      ) : (
+        <div className="menu-admin-options">
+          <h5 className="menu-admin-variants__title">Extras / Optionen</h5>
+          <p className="menu-admin-hint">Zuerst speichern, danach können Optionsgruppen angelegt werden.</p>
+        </div>
+      )}
 
       {error && <p className="menu-state menu-state--error">{error}</p>}
 
