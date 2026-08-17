@@ -44,11 +44,16 @@ export function KitchenPage() {
                   {order.order_items.map((item) => `${item.quantity}× ${item.menu_items?.name ?? '?'}`).join(', ')}
                 </span>
                 {order.notes && <span className="staff-card__meta">{order.notes}</span>}
+                {/*
+                  Primary, by the documented exception in Design.md: advancing an
+                  order is the only thing this screen exists to do, so it keeps the
+                  solid CTA even though that means one per open order.
+                */}
                 {action && (
                   <div className="staff-card__actions">
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="btn btn-primary"
                       onClick={() => updateStatus(order.id, action.next)}
                     >
                       {action.label}

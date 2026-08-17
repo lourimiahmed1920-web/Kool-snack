@@ -129,6 +129,11 @@ genuinely float above the page (bottom sheet, action bar, cart bar).
 - Never more than ONE primary button visible at once per screen/section. In a
   list, that primary belongs to the section (the form submit, the "add" button);
   the per-row actions are secondary or destructive, never primary.
+- The one exception is the kitchen display (`/kueche`): advancing an order is the
+  only thing that screen exists to do and it is read across a kitchen, so its
+  per-card advance button stays primary even though that means one solid CTA per
+  open order. A screen may claim this exception only if it has a single purpose
+  and no competing primary of its own.
 
 **Badges/pills**: `border-radius: 999px`, padding `4px 12px`, `font-size: 13px`,
 `font-weight: 500`, colored background from the tint tokens + matching dark
