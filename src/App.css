@@ -49,6 +49,10 @@
   color: var(--color-danger);
 }
 
+.menu-state--success {
+  color: var(--color-success);
+}
+
 /* Staff quantity controls — smaller than the customer `.stepper`, because these
    sit inside dense list rows rather than under a thumb on a menu screen. */
 
@@ -135,7 +139,8 @@
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 13.5px;
+  /* Small on the type scale; the old value was between two steps. */
+  font-size: 13px;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
@@ -158,7 +163,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 13.5px;
+  /* Small on the type scale, matching the `.field` label primitive it mirrors. */
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-ink-900);
 }
@@ -631,47 +637,24 @@
 
 .staff-section-title {
   font-size: 18px;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
-/* Auto-fitting grid, not a 480px column: on a desk this shows a whole shift's
-   entries at once instead of one narrow strip down the left edge. */
-.time-entry-list {
-  list-style: none;
-  margin: 0 0 var(--space-6);
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--space-2);
-}
-
-.time-entry {
+/* A section's H2 and its single action, on one line. Every back-office section
+   opens with this, so the title/button relationship is identical everywhere
+   instead of being re-invented with inline flex per section. */
+.staff-section-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: 10px;
-  font-size: 14px;
+  justify-content: space-between;
+  gap: var(--space-3);
   flex-wrap: wrap;
+  margin-bottom: var(--space-3);
 }
 
-.time-entry__date {
-  font-weight: 600;
-  color: var(--color-ink-900);
-}
-
-.time-entry__range {
-  color: var(--color-ink-600);
-}
-
-.time-entry__meta {
-  display: flex;
-  gap: 12px;
-  color: var(--color-ink-600);
-  font-size: 13px;
+/* The title's own bottom margin belongs to the header row here. */
+.staff-section-header .staff-section-title {
+  margin-bottom: 0;
 }
 
 /*
@@ -1302,6 +1285,11 @@ body.keyboard-open .staff-tabbar {
   margin-bottom: var(--space-4);
 }
 
+/* Sits well clear of the last order card so it can't be hit by mistake mid-service. */
+.kitchen-page__signout {
+  margin-top: var(--space-6);
+}
+
 /* ================================================== Admin KPI cards (Übersicht)
 
    Rebuilt after these rules were lost in a refactor. Deliberately not a fixed
@@ -1591,6 +1579,113 @@ body.keyboard-open .staff-tabbar {
     position: sticky;
     top: var(--space-4);
   }
+}
+
+/* --- Card lists, shared by every back-office section ---------------------- */
+
+/*
+  Auto-fit grid rather than a fixed-width column: the back office takes the full
+  window (Design.md), so a service's orders or reservations fill a monitor
+  instead of running down one narrow strip. Same minmax as the stock list.
+
+  One grid and one card vocabulary for all the sections, so the lists line up
+  with each other as tabs are switched instead of each having its own metrics.
+*/
+.staff-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .staff-card-list {
+    gap: var(--space-4);
+  }
+}
+
+/* Goes on the shared `.card` primitive; owns only the inner vertical stack. */
+.staff-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.staff-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* The row's primary identifier where that isn't an order number. */
+.staff-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink-900);
+}
+
+/* Micro: a timestamp is fine print next to the thing staff actually call out. */
+.staff-card__time {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-ink-400);
+}
+
+/*
+  Small: everything secondary — order type, totals, phone numbers, notes.
+  Left inline on purpose: as a direct child of `.staff-card` it is already a
+  flex item and stacks, and that also lets it run inline after a title.
+*/
+.staff-card__meta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink-600);
+}
+
+/* Body: the substance of the card, e.g. the dishes on an order. */
+.staff-card__body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-ink-900);
+}
+
+.staff-card__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+/*
+  Single-line variant: a compact record (one attendance entry) whose value sits
+  opposite its label rather than stacked under it.
+*/
+.staff-card--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Inline control group sitting opposite a section title (date filters etc.). */
+.staff-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Micro: fine print closing a section (caveats, "not available yet" notes). */
+.staff-note {
+  margin-top: var(--space-4);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-ink-400);
 }
 
 /* Daily order number — the thing staff call out across a service, so it reads

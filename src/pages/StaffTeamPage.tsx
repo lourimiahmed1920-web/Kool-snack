@@ -57,17 +57,17 @@ export function StaffTeamPage() {
       {loading && <p className="menu-state">Lädt…</p>}
 
       {!loading && (
-        <ul className="time-entry-list">
+        <ul className="staff-card-list">
           {team.map((member) => (
-            <li key={member.id} className="time-entry">
+            <li key={member.id} className="card staff-card staff-card--row">
               <div>
-                <span className="time-entry__date">{member.full_name ?? '(kein Name)'}</span>
-                <span className="time-entry__range"> · {STAFF_ROLE_LABELS[member.role as StaffRole] ?? member.role}</span>
+                <span className="staff-card__title">{member.full_name ?? '(kein Name)'}</span>
+                <span className="staff-card__meta"> · {STAFF_ROLE_LABELS[member.role as StaffRole] ?? member.role}</span>
                 <span className={`badge ${member.is_active ? 'badge-success' : 'badge-danger'}`}>
                   {member.is_active ? 'Aktiv' : 'Inaktiv'}
                 </span>
               </div>
-              {member.phone && <div className="time-entry__meta">{member.phone}</div>}
+              {member.phone && <span className="staff-card__meta">{member.phone}</span>}
             </li>
           ))}
         </ul>
@@ -75,7 +75,7 @@ export function StaffTeamPage() {
 
       <h3 className="staff-section-title">Mitarbeiter hinzufügen</h3>
 
-      <form className="checkout-form" onSubmit={handleSubmit} style={{ maxWidth: 460 }}>
+      <form className="checkout-form" onSubmit={handleSubmit}>
         <label className="checkout-form__field">
           Name
           <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
@@ -100,7 +100,7 @@ export function StaffTeamPage() {
         {error && <p className="menu-state menu-state--error">{error}</p>}
 
         {created && (
-          <p className="menu-state" style={{ color: 'var(--halal-green)' }}>
+          <p className="menu-state menu-state--success">
             Account erstellt für {created.email}. Temporäres Passwort: <strong>{created.tempPassword}</strong>
             <br />
             Bitte sicher an die Person weitergeben — es wird hier nicht erneut angezeigt.

@@ -25,40 +25,46 @@ export function TeamTimeSection({ restaurantId }: TeamTimeSectionProps) {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <h3 className="staff-section-title" style={{ marginBottom: 0 }}>
-          Zeiterfassung
-        </h3>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} max={todayIso()} />
+      <div className="staff-section-header">
+        <h3 className="staff-section-title">Zeiterfassung</h3>
+        <div className="staff-filter">
+          <div className="field">
+            <input
+              type="date"
+              value={date}
+              max={todayIso()}
+              aria-label="Tag auswählen"
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       {loading && <p className="menu-state">Lädt…</p>}
       {!loading && entries.length === 0 && <p className="menu-state">Keine Einträge an diesem Tag.</p>}
 
       {!loading && entries.length > 0 && (
-        <ul className="time-entry-list">
+        <ul className="staff-card-list">
           {entries.map((entry) => {
             const member = team.find((m) => m.id === entry.profile_id)
             return (
-              <li key={entry.id} className="time-entry">
+              <li key={entry.id} className="card staff-card staff-card--row">
                 <div>
-                  <span className="time-entry__date">{member?.full_name ?? 'Unbekannt'}</span>
-                  <span className="time-entry__range">
+                  <span className="staff-card__title">{member?.full_name ?? 'Unbekannt'}</span>
+                  <span className="staff-card__meta">
                     {' '}
                     · {timeFormat.format(new Date(entry.clock_in))}
                     {entry.clock_out ? ` – ${timeFormat.format(new Date(entry.clock_out))}` : ' – läuft'}
                   </span>
                 </div>
-                <div className="time-entry__meta">
-                  <span>{formatWorkedMinutes(entry.worked_minutes)}</span>
-                </div>
+                <span className="staff-card__meta">{formatWorkedMinutes(entry.worked_minutes)}</span>
               </li>
             )
           })}
         </ul>
       )}
 
-      <p className="menu-state" style={{ fontSize: 12 }}>
+      <p className="staff-note">
         Verspätungen und Anwesenheitsquote sind noch nicht verfügbar — dafür wird eine
         Schichtplan-Funktion benötigt, die es noch nicht gibt.
       </p>

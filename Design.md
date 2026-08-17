@@ -121,7 +121,14 @@ genuinely float above the page (bottom sheet, action bar, cart bar).
   min-height 48px, `font-weight: 600`. Hover: `--color-primary-hover`.
   Active/pressed: `transform: scale(0.97)`.
 - Secondary: white background, `1px solid var(--color-line)`, dark text
-- Never more than ONE primary button visible at once per screen/section
+- Destructive (cancel, delete): `background: var(--color-danger-bg)`,
+  `color: var(--color-danger)`, `1px solid transparent` so it matches the
+  secondary button's box, border turning `--color-danger` on hover. Never solid
+  red — solid red is `--color-primary`'s alone, and a destructive action must not
+  out-shout the screen's actual CTA.
+- Never more than ONE primary button visible at once per screen/section. In a
+  list, that primary belongs to the section (the form submit, the "add" button);
+  the per-row actions are secondary or destructive, never primary.
 
 **Badges/pills**: `border-radius: 999px`, padding `4px 12px`, `font-size: 13px`,
 `font-weight: 500`, colored background from the tint tokens + matching dark

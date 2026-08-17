@@ -60,14 +60,19 @@ export function ReservationsSection({ restaurantId }: ReservationsSectionProps) 
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <h3 className="staff-section-title" style={{ marginBottom: 0 }}>
-          Reservierungen
-        </h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+      <div className="staff-section-header">
+        <h3 className="staff-section-title">Reservierungen</h3>
+        <div className="staff-filter">
+          <div className="field">
+            <input
+              type="date"
+              value={dateFilter}
+              aria-label="Nach Datum filtern"
+              onChange={(e) => setDateFilter(e.target.value)}
+            />
+          </div>
           {dateFilter && (
-            <button type="button" className="cart-line__remove" onClick={() => setDateFilter('')}>
+            <button type="button" className="btn btn-secondary" onClick={() => setDateFilter('')}>
               Alle
             </button>
           )}
@@ -78,25 +83,26 @@ export function ReservationsSection({ restaurantId }: ReservationsSectionProps) 
       {!loading && visibleReservations.length === 0 && <p className="menu-state">Keine Reservierungen.</p>}
 
       {!loading && visibleReservations.length > 0 && (
-        <ul className="time-entry-list" style={{ maxWidth: 640 }}>
+        <ul className="staff-card-list">
           {visibleReservations.map((reservation) => (
-            <li key={reservation.id} className="time-entry" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-                <span className="time-entry__date">{dateTimeFormat.format(new Date(reservation.reservation_time))}</span>
-                <span className="time-entry__meta">
+            <li key={reservation.id} className="card staff-card">
+              <div className="staff-card__head">
+                <span className="staff-card__title">
+                  {dateTimeFormat.format(new Date(reservation.reservation_time))}
+                </span>
+                <span className="staff-card__meta">
                   {reservation.guest_name} · {reservation.party_size} Personen
                 </span>
               </div>
-              <span className="time-entry__meta">{reservation.guest_phone}</span>
-              {reservation.notes && <span className="time-entry__meta">{reservation.notes}</span>}
+              <span className="staff-card__meta">{reservation.guest_phone}</span>
+              {reservation.notes && <span className="staff-card__meta">{reservation.notes}</span>}
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
-                <span className="time-entry__meta">{STATUS_LABELS[reservation.status]}</span>
+              <div className="staff-card__actions">
+                <span className="staff-card__meta">{STATUS_LABELS[reservation.status]}</span>
                 {reservation.status === 'pending' && (
                   <button
                     type="button"
-                    className="btn btn-primary"
-                    style={{ padding: '6px 14px' }}
+                    className="btn btn-secondary"
                     onClick={() => updateStatus(reservation.id, 'confirmed')}
                   >
                     Bestätigen
@@ -105,7 +111,7 @@ export function ReservationsSection({ restaurantId }: ReservationsSectionProps) 
                 {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
                   <button
                     type="button"
-                    className="cart-line__remove"
+                    className="btn btn-danger"
                     onClick={() => updateStatus(reservation.id, 'cancelled')}
                   >
                     Stornieren
@@ -118,7 +124,7 @@ export function ReservationsSection({ restaurantId }: ReservationsSectionProps) 
       )}
 
       <h4 className="staff-section-title">Reservierung hinzufügen</h4>
-      <form className="checkout-form" onSubmit={handleCreate} style={{ maxWidth: 460 }}>
+      <form className="checkout-form" onSubmit={handleCreate}>
         <label className="checkout-form__field">
           Name
           <input type="text" required value={name} onChange={(e) => setName(e.target.value)} />

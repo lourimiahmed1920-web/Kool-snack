@@ -38,12 +38,10 @@ export function OrdersSection({ restaurantId }: OrdersSectionProps) {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <h3 className="staff-section-title" style={{ marginBottom: 0 }}>
-          Bestellungen
-        </h3>
+      <div className="staff-section-header">
+        <h3 className="staff-section-title">Bestellungen</h3>
         {canCreateOrders && !creating && (
-          <button type="button" className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={() => setCreating(true)}>
+          <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
             <Plus size={16} />
             Neue Bestellung
           </button>
@@ -65,27 +63,33 @@ export function OrdersSection({ restaurantId }: OrdersSectionProps) {
       {!loading && orders.length === 0 && <p className="menu-state">Keine Bestellungen.</p>}
 
       {!loading && orders.length > 0 && (
-        <ul className="time-entry-list" style={{ maxWidth: 640 }}>
+        <ul className="staff-card-list">
           {orders.map((order) => (
-            <li key={order.id} className="time-entry" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'baseline' }}>
+            <li key={order.id} className="card staff-card">
+              <div className="staff-card__head">
                 <span className="order-number">{formatOrderNumber(order.daily_number)}</span>
-                <span className="time-entry__date">{dateTimeFormat.format(new Date(order.created_at))}</span>
-                <span className="time-entry__meta">
+                <span className="staff-card__time">{dateTimeFormat.format(new Date(order.created_at))}</span>
+                <span className="staff-card__meta">
                   {ORDER_TYPE_LABELS[order.order_type] ?? order.order_type} · {currency.format(order.total_amount)}
                 </span>
               </div>
-              <span className="time-entry__meta">
+              <span className="staff-card__body">
                 {order.order_items.map((item) => `${item.quantity}× ${item.menu_items?.name ?? '?'}`).join(', ')}
               </span>
-              {order.notes && <span className="time-entry__meta">{order.notes}</span>}
-              <select value={order.status} onChange={(e) => updateStatus(order.id, e.target.value as OrderStatus)}>
-                {Object.entries(STATUS_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
+              {order.notes && <span className="staff-card__meta">{order.notes}</span>}
+              <div className="field">
+                <select
+                  value={order.status}
+                  aria-label="Status der Bestellung"
+                  onChange={(e) => updateStatus(order.id, e.target.value as OrderStatus)}
+                >
+                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </li>
           ))}
         </ul>

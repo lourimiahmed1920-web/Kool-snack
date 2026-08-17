@@ -274,6 +274,22 @@ img {
   border-color: var(--color-ink-400);
 }
 
+/*
+  Destructive actions (stornieren, löschen). Deliberately a pale tint rather than
+  solid red: solid red belongs to `--color-primary`, and a cancel button must
+  never out-shout the screen's actual CTA. The border stays transparent so the
+  box matches `.btn-secondary`'s height, and appears on hover.
+*/
+.btn-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  border: 1px solid transparent;
+}
+
+.btn-danger:hover:not(:disabled) {
+  border-color: var(--color-danger);
+}
+
 .btn-block {
   display: flex;
   width: 100%;

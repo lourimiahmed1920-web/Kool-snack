@@ -30,29 +30,30 @@ export function KitchenPage() {
       {!loading && activeOrders.length === 0 && <p className="menu-state">Keine offenen Bestellungen.</p>}
 
       {!loading && activeOrders.length > 0 && (
-        <ul className="time-entry-list" style={{ maxWidth: 640 }}>
+        <ul className="staff-card-list">
           {activeOrders.map((order) => {
             const action = NEXT_ACTION[order.status]
             return (
-              <li key={order.id} className="time-entry" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline' }}>
+              <li key={order.id} className="card staff-card">
+                <div className="staff-card__head">
                   <span className="order-number">{formatOrderNumber(order.daily_number)}</span>
-                  <span className="time-entry__date">{timeFormat.format(new Date(order.created_at))}</span>
-                  <span className="time-entry__meta">{currency.format(order.total_amount)}</span>
+                  <span className="staff-card__time">{timeFormat.format(new Date(order.created_at))}</span>
+                  <span className="staff-card__meta">{currency.format(order.total_amount)}</span>
                 </div>
-                <span className="time-entry__meta">
+                <span className="staff-card__body">
                   {order.order_items.map((item) => `${item.quantity}× ${item.menu_items?.name ?? '?'}`).join(', ')}
                 </span>
-                {order.notes && <span className="time-entry__meta">{order.notes}</span>}
+                {order.notes && <span className="staff-card__meta">{order.notes}</span>}
                 {action && (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    style={{ alignSelf: 'flex-start', marginTop: 8 }}
-                    onClick={() => updateStatus(order.id, action.next)}
-                  >
-                    {action.label}
-                  </button>
+                  <div className="staff-card__actions">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => updateStatus(order.id, action.next)}
+                    >
+                      {action.label}
+                    </button>
+                  </div>
                 )}
               </li>
             )
@@ -60,7 +61,7 @@ export function KitchenPage() {
         </ul>
       )}
 
-      <button type="button" className="cart-line__remove" onClick={signOut} style={{ marginTop: 24 }}>
+      <button type="button" className="btn btn-secondary kitchen-page__signout" onClick={signOut}>
         Abmelden
       </button>
     </main>
